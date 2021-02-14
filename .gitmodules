@@ -1,0 +1,3 @@
+[submodule "NeutOS"]
+	path = NeutOS
+	url = git@github.com:borntohonk/NeutOS.git
