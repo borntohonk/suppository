@@ -18,6 +18,7 @@ AMSVER="$MAJORVER.$MINORVER.$MICROVER-$AMSREV"
 	unzip NeutOS/out/atmosphere-$AMSVER.zip -d atmosphere-$AMSVER/
 	mkdir atmosphere-$AMSVER/atmosphere/hosts
 	cp configs/default.txt atmosphere-$AMSVER/atmosphere/hosts/default.txt
+	cp configs/exosphere.ini atmosphere-$AMSVER/exosphere.ini
 	cp NeutOS/fusee/fusee-primary/fusee-primary.bin atmosphere-$AMSVER/fusee-primary.bim
 	cp hbl/hbl.nsp atmosphere-$AMSVER/atmosphere/hbl.nsp
 	cp hbmenu/hbmenu.nro atmosphere-$AMSVER/hbmenu.nro

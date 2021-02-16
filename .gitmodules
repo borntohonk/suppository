@@ -1,3 +1,6 @@
 [submodule "NeutOS"]
 	path = NeutOS
 	url = git@github.com:borntohonk/NeutOS.git
+[submodule "libnx"]
+	path = libnx
+	url = https://github.com/switchbrew/libnx.git
