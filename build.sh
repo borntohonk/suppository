@@ -11,6 +11,8 @@ AMSVER="$MAJORVER.$MINORVER.$MICROVER-$AMSREV"
 	echo "$MAJORVER.$MINORVER.$MICROVER" > ams.version
 	mkdir hbl
 	mkdir hbmenu
+	mkdir ams-booter
+	wget $(curl -s https://api.github.com/repos/borntohonk/Lockpick_RCM/releases/latest | grep browser_download_url | cut -d '"' -f 4) -O ams-booter/payload.bin
 	wget $(curl -s https://api.github.com/repos/switchbrew/nx-hbloader/releases/latest | grep browser_download_url | cut -d '"' -f 4) -O hbl/hbl.nsp
 	wget $(curl -s https://api.github.com/repos/switchbrew/nx-hbmenu/releases/latest | grep browser_download_url | cut -d '"' -f 4) -O hbmenu/temp.zip
 	unzip hbmenu/temp.zip -d hbmenu
@@ -19,9 +21,9 @@ AMSVER="$MAJORVER.$MINORVER.$MICROVER-$AMSREV"
 	mkdir atmosphere-$AMSVER/atmosphere/hosts
 	cp configs/default.txt atmosphere-$AMSVER/atmosphere/hosts/default.txt
 	cp configs/exosphere.ini atmosphere-$AMSVER/exosphere.ini
-	cp NeutOS/fusee/fusee-primary/fusee-primary.bin atmosphere-$AMSVER/fusee-primary.bim
 	cp hbl/hbl.nsp atmosphere-$AMSVER/atmosphere/hbl.nsp
 	cp hbmenu/hbmenu.nro atmosphere-$AMSVER/hbmenu.nro
+	cp ams-booter/payload.bin atmosphere-$AMSVER/payload.bin
 	rm atmosphere-$AMSVER/sept/sept-secondary.bin
 	cp $(echo $SEPT_SECONDARY_BIN_PATH) atmosphere-$AMSVER/sept/sept-secondary.bin
 	mkdir atmosphere-$AMSVER/atmosphere/kip_patches/fs_patches
@@ -31,4 +33,5 @@ AMSVER="$MAJORVER.$MINORVER.$MICROVER-$AMSREV"
 	rm -r atmosphere-$AMSVER
 	rm -r hbl
 	rm -r hbmenu
+	rm -r ams-booter
 	mv atmosphere-$AMSVER.zip out/NeutOS-$AMSVER+hbl-$HBLVER+hbmenu-$HBMENUVER+patches.zip

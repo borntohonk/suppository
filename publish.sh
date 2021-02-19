@@ -17,7 +17,7 @@ res=`curl --user "$GH_USER:$GH_PATH" -X POST https://api.github.com/repos/${GH_U
   \"tag_name\": \"$AMSVER-$BUILD_HASH\",
   \"target_commitish\": \"$GH_TARGET\",
   \"name\": \"NeutOS $AMSVER-$BUILD_HASH\",
-  \"body\": \"![Banner](https://github.com/borntohonk/NeutOS/raw/master/img/banner.png) I can be reached on discord at borntohonk#9099 if there are any inquiries. This github and release is automated. NeutOS $AMSVER-$BUILD_HASH, HBL $HBLVER and HBMENU $HBMENUVER has been auto-built and auto-published with suppository. (https://github.com/borntohonk/suppository) . If you are looking for fusee-primary, it is in the release .zip \r\n\r\n the following is the changelog of Atmosphere, which this  NeutOS release is based on: \r\n\r\n ${AMSCHANGELOG} \",
+  \"body\": \"![Banner](https://github.com/borntohonk/NeutOS/raw/master/img/banner.png) I can be reached on discord at borntohonk#9099 if there are any inquiries. This github and release is automated. NeutOS $AMSVER-$BUILD_HASH, HBL $HBLVER and HBMENU $HBMENUVER has been auto-built and auto-published with suppository. (https://github.com/borntohonk/suppository). Use the provided payload.bin inside of the release .zip to boot NeutOS with your favorite payload loader of choice, you don't have to change the payload out even if you update NeutOS (README.md of suppository explains what it is.) \r\n\r\n the following is the changelog of Atmosphere, which this  NeutOS release is based on: \r\n\r\n ${AMSCHANGELOG} \",
   \"draft\": false,
   \"prerelease\": false
 }"`
