@@ -14,6 +14,8 @@ You can fork suppository and alter the values defined in check.sh, build.sh and 
 
 For publishing you're going to want to put your github api personal token under .ghtoken and have it set up as GH_TOKEN_PATH in i.e. .bashrc
 
+
+Payload.bin within the resulting release archive is "Lockpick_RCM" forked and altered to boot "/atmosphere/reboot_payload.bin" instead of deriving keys. It's basically just used as a chainloader, to remove the need to flash dongle/ update payload on phone on rekado, etc.
 ---
 
 pre-requisites: 
