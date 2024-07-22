@@ -2,7 +2,7 @@ This repository is for the docker container "suppository" which exists as a full
 
 This container can still be used to compile atmosphere by using the following command, and output the compiled release (release .zip and fusee.bin) it in the directory you run the command from:
 
-Container rebuilt with latest dkp and packages last on: 21st of june 2024.
+Container rebuilt with latest dkp and packages last on: 22nd of july 2024.
 
 ```
 
