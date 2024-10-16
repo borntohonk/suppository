@@ -55,7 +55,6 @@ sudo docker run --name suppository \
 
 
 TODO:
-re-add git-actions
 publish working release with git actions
 
 

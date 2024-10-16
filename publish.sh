@@ -44,4 +44,4 @@ echo "" >> changelog.md && \
 echo "- Contains crash fix for users who use exosphere prodinfo blanker functionality and previously have used "incognito" to mess with their prodinfo. Credit for finding this goes to https://github.com/fruityloops1/nim-prodinfo-blank-fix" >> changelog.md && \
 echo "" >> changelog.md && \
 cat changelog.md
-#example release: gh release create $HOSVER-$AMSVER-$AMSZIPHASH -F changelog.md ~/share/atmosphere-${AMSVER}-master-${AMSZIPHASH}+hbl-${HBLVER}+hbmenu-${HBMENUVER}.zip --title "Atmosphère+ $AMSVER-$AMSZIPHASH for FW version $HOSVER" --repo github.com/borntohonk/Atmosphere
+#example release, requires gh_token enviroment variable set gh release create $HOSVER-$AMSVER-$AMSZIPHASH -F changelog.md atmosphere-${AMSVER}-master-${AMSZIPHASH}+hbl-${HBLVER}+hbmenu-${HBMENUVER}.zip --title "Atmosphère+ $AMSVER-$AMSZIPHASH for FW version $HOSVER" --repo github.com/borntohonk/Atmosphere
