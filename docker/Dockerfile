@@ -4,6 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 COPY tools/hactool /bin/hactool
 COPY tools/hactoolnet /bin/hactoolnet
+COPY configs /build/configs
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils apt-transport-https && \
