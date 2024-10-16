@@ -55,8 +55,7 @@ sudo docker run --name suppository \
 
 
 TODO:
-publish working release with git actions
-
+set up git workflow to build and publish docker container
 
 
 ```
