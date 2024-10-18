@@ -2,7 +2,7 @@ This repository is for the docker container "suppository" which exists as a full
 
 This container can still be used to compile atmosphere by using the following command, and output the compiled release (release .zip and fusee.bin) it in the directory you run the command from:
 
-Container rebuilt with latest dkp and packages last on: 16th of october 2024.
+Container rebuilt with latest dkp and packages the time of the last time this workflow was ran: https://github.com/borntohonk/suppository/actions/workflows/docker.yml
 
 Current example below is the build instructions that produce atmosphere 1.8.0 (16th of october 2024), note the "haze" and "daybreak" .nro's are made before atmosphere because of issues with paralell thread makes in atmospheres's codebase.
 
@@ -54,20 +54,21 @@ sudo docker run --name suppository \
 ```
 
 
-TODO:
-set up git workflow to build and publish docker container
-
-
-```
-
 If you have any inquiries; file an issue with the github tracker.
 
-pre-requisites: 
-* must be able to use a text-editor (at very least) to make alterations to deploy to another repository.
-* create a secret in github settings:
-* a github token saved in the repository secrets as "GH_TOKEN", with Repo permissions, and Org read/write permissions.
+workflow related instructions:
 
-```
+The following should be filed under https://github.com/borntohonk/suppository/settings/secrets/actions as "Repository Secrets"
+pre-requisites: 
+
+* a github Private Access Token(PAT) saved in the repository as "GH_TOKEN", with Repo permissions, and Org read/write permissions is required to deploy to a repository of choice.
+
+the following should be filed under https://github.com/borntohonk/suppository/settings/variables/actions as "Repository Variables"
+* Atmosphere source repository you want to compile defined as "ATMOSPHERE_REPOSITORY", examples: borntohonk/Atmosphere, Atmosphere-NX/Atmosphere
+* target repository defined as "TARGET_REPOSITORY", for where to deploy the github release to. example: borntohonk/Atmosphere
+* libnx repository defined as "LIBNX_REPOSITORY", for which repository to use as a base. examples: switchbrew/libnx, Atmosphere-NX/libnx
+* libnx branch to use, defined as "LIBNX_BRANCH", for which branch to use. examples: master, 1900_support
+
 
 Credits: [@borntohonk](https://github.com/borntohonk)
 license: whichever applicable to whichever files and MIT on whatever else (not that there's anything worth licensing here)

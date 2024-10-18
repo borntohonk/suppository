@@ -34,7 +34,7 @@ jobs:
     - name: Checkout Atmosphere
       uses: actions/checkout@v4
       with:
-        repository: borntohonk/Atmosphere
+        repository: ${{ vars.ATMOSPHERE_REPOSITORY }}
         path: Atmosphere
 
     - name: Checkout Hekate
@@ -44,12 +44,12 @@ jobs:
         repository: CTCaer/hekate
         path: hekate
 
-    - name: Checkout libnx 1900_support
+    - name: Checkout libnx
       uses: actions/checkout@v4
       with:
-        repository: Atmosphere-NX/libnx
+        repository: ${{ vars.LIBNX_REPOSITORY }}
         path: libnx
-        ref: 1900_support
+        ref: ${{ vars.LIBNX_BRANCH }}
 
     - name: Build libnx, nx-hbloader, nx-hbmenu and Atmosphere
       run: |
@@ -137,7 +137,7 @@ jobs:
         echo "" >> changelog.md && \
         echo "- The intention of the proposed changes enable running homebrew games on consoles that run Atmosphere. Some of these homebrew games in circulation rely on these changes to run. Though there are controversial other usecases for the changes." >> changelog.md && \
         echo "" >> changelog.md && \
-        echo "- This release has been compiled with this version of libnx: https://github.com/switchbrew/libnx/commit/$LIBNXHASH"  >> changelog.md && \
+        echo "- This release has been compiled with this version of libnx: https://github.com/${{ vars.LIBNX_REPOSITORY }}/commit/$LIBNXHASH"  >> changelog.md && \
         echo "" >> changelog.md && \
         echo "- This release is intended for demonstrative purposes only. Any inquries or questions can be submitted at https://github.com/borntohonk/Atmosphere/issues" >> changelog.md && \
         echo "" >> changelog.md && \
@@ -159,4 +159,4 @@ jobs:
         echo "" >> changelog.md && \
         echo "- This release was built with suppository, an atmosphere release suite, and docker container: https://github.com/borntohonk/suppository" >> changelog.md && \
         echo "" >> changelog.md && \
-        gh release create $HOSVER-$AMSVER-$AMSZIPHASH -F changelog.md atmosphere-${AMSVER}-master-${AMSZIPHASH}+hbl-${HBLVER}+hbmenu-${HBMENUVER}.zip --title "Atmosphère+ $AMSVER-$AMSZIPHASH for FW version $HOSVER" --repo github.com/borntohonk/Atmosphere
+        gh release create $HOSVER-$AMSVER-$AMSZIPHASH -F changelog.md atmosphere-${AMSVER}-master-${AMSZIPHASH}+hbl-${HBLVER}+hbmenu-${HBMENUVER}.zip --title "Atmosphère+ $AMSVER-$AMSZIPHASH for FW version $HOSVER" --repo github.com/${{ vars.TARGET_REPOSITORY }}
