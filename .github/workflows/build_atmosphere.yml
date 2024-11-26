@@ -46,6 +46,7 @@ jobs:
       with:
         repository: ${{ vars.ATMOSPHERE_REPOSITORY }}
         path: Atmosphere
+        ref: ${{ vars.ATMOSPHERE_BRANCH }}
 
     - name: Checkout Hekate
       uses: actions/checkout@v4
@@ -145,14 +146,14 @@ jobs:
         cp nx-hbloader/hbl.nsp temp/atmosphere/hbl.nsp && \
         cp nx-hbmenu/nx-hbmenu.nro temp/hbmenu.nro && \
         cd temp && \
-        zip -qr ../atmosphere-${{ env.AMSVER }}-master-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip *
+        zip -qr ../atmosphere-${{ env.AMSVER }}-${{ vars.ATMOSPHERE_BRANCH }}-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip *
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         include-hidden-files: true
         overwrite: true
-        name: atmosphere-${{ env.AMSVER }}-master-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip
+        name: atmosphere-${{ env.AMSVER }}-${{ vars.ATMOSPHERE_BRANCH }}-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip
         path: temp/
 
     - name: Publish bundle to target repository
@@ -195,9 +196,10 @@ jobs:
         echo "" >> changelog.md && \
         echo "- This release was built with this workflow https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID and had the following repository variables set:" >> changelog.md && \
         echo "- ATMOSPHERE_REPOSITORY=${{ vars.ATMOSPHERE_REPOSITORY }}" >> changelog.md && \
+        echo "- ATMOSPHERE_BRANCH=${{ vars.ATMOSPHERE_BRANCH }}" >> changelog.md && \
         echo "- LIBNX_REPOSITORY=${{ vars.LIBNX_REPOSITORY }}" >> changelog.md && \
         echo "- LIBNX_BRANCH=${{ vars.LIBNX_BRANCH }}" >> changelog.md && \
         echo "- TARGET_REPOSITORY=${{ vars.TARGET_REPOSITORY }}" >> changelog.md && \
         echo "- SYSPATCH_REPOSITORY=${{ vars.SYSPATCH_REPOSITORY }}" >> changelog.md && \
         echo "" >> changelog.md && \
-        gh release create ${{ env.HOSVER }}-${{ env.AMSVER }}-${{ env.AMSZIPHASH }} -F changelog.md atmosphere-${{ env.AMSVER }}-master-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip --title "Atmosphère+ ${{ env.AMSVER }}-${{ env.AMSZIPHASH }} for FW version ${{ env.HOSVER }}" --repo github.com/${{ vars.TARGET_REPOSITORY }}
+        gh release create ${{ env.HOSVER }}-${{ env.AMSVER }}-${{ env.AMSZIPHASH }} -F changelog.md atmosphere-${{ env.AMSVER }}-${{ vars.ATMOSPHERE_BRANCH }}-${{ env.AMSZIPHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip --title "Atmosphère+ ${{ env.AMSVER }}-${{ env.AMSZIPHASH }} for FW version ${{ env.HOSVER }}" --repo github.com/${{ vars.TARGET_REPOSITORY }} --target ${{ vars.ATMOSPHERE_BRANCH }}

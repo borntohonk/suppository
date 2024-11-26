@@ -68,6 +68,7 @@ pre-requisites:
 
 the following should be filed under https://github.com/borntohonk/suppository/settings/variables/actions as "Repository Variables"
 * Atmosphere source repository you want to compile defined as "ATMOSPHERE_REPOSITORY", examples: borntohonk/Atmosphere, Atmosphere-NX/Atmosphere
+* Atmosphere branch to use, defined as "ATMOSPHERE_BRANCH", for which branch to use. examples: master
 * target repository defined as "TARGET_REPOSITORY", for where to deploy the github release to. example: borntohonk/Atmosphere
 * libnx repository defined as "LIBNX_REPOSITORY", for which repository to use as a base. examples: switchbrew/libnx, Atmosphere-NX/libnx
 * libnx branch to use, defined as "LIBNX_BRANCH", for which branch to use. examples: master, 1900_support
