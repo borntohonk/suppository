@@ -1,0 +1,2 @@
+# Completely block anything Nintendo related
+127.0.0.1 *nintendo*

@@ -1,0 +1,126 @@
+name: Bundle a release for Atmosphere
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout suppository
+      uses: actions/checkout@v4
+      with:
+        repository: borntohonk/suppository
+        path: suppository
+
+    - name: Checkout Atmosphere
+      uses: actions/checkout@v4
+      with:
+        repository: Atmosphere-NX/Atmosphere
+        path: Atmosphere
+
+    - name: Setup github enviroment variables
+      env: 
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        AMSVER="$(gh api repos/Atmosphere-NX/Atmosphere/releases | jq -r '.[0].tag_name')"
+        HBMENUVER="$(gh api repos/switchbrew/nx-hbmenu/releases | jq -r '.[0].tag_name')"
+        TEXPLORERVER="$(gh api repos/suchmememanyskill/TegraExplorer/releases | jq -r '.[0].tag_name')"
+        HBLVER="$(gh api repos/switchbrew/nx-hbloader/releases | jq -r '.[0].tag_name')"
+        HEKATEVER="$(gh api repos/CTCaer/hekate/releases | jq -r '.[0].tag_name')"
+        SYSPATCHVER="$(gh api repos/${{ vars.SYSPATCH_REPOSITORY }}/releases | jq -r '.[0].tag_name')"
+        OVLVER="$(gh api repos/ppkantorski/nx-ovlloader/releases | jq -r '.[0].tag_name')"
+        TESLAVER="$(gh api repos/WerWolv/Tesla-Menu/releases | jq -r '.[0].tag_name')"
+        HOS_MAJORVER=$(grep 'define ATMOSPHERE_SUPPORTED_HOS_VERSION_MAJOR\b' Atmosphere/libraries/libvapours/include/vapours/ams/ams_api_version.h | tr -s [:blank:] | cut -d' ' -f3)
+        HOS_MINORVER=$(grep 'define ATMOSPHERE_SUPPORTED_HOS_VERSION_MINOR\b' Atmosphere/libraries/libvapours/include/vapours/ams/ams_api_version.h | tr -s [:blank:] | cut -d' ' -f3)
+        HOS_MICROVER=$(grep 'define ATMOSPHERE_SUPPORTED_HOS_VERSION_MICRO\b' Atmosphere/libraries/libvapours/include/vapours/ams/ams_api_version.h | tr -s [:blank:] | cut -d' ' -f3)
+        HOSVER=$HOS_MAJORVER.$HOS_MINORVER.$HOS_MICROVER
+        AMSHASH="$(gh api repos/Atmosphere-NX/Atmosphere/tags | jq -r '.[0].commit.sha' | cut -c -9)"
+        echo "AMSVER=${AMSVER}" >> $GITHUB_ENV
+        echo "HOSVER=${HOSVER}" >> $GITHUB_ENV
+        echo "HBLVER=${HBLVER}" >> $GITHUB_ENV
+        echo "HBMENUVER=${HBMENUVER}" >> $GITHUB_ENV
+        echo "HEKATEVER=${HEKATEVER}" >> $GITHUB_ENV
+        echo "SYSPATCHVER=${SYSPATCHVER}" >> $GITHUB_ENV
+        echo "OVLVER=${OVLVER}" >> $GITHUB_ENV
+        echo "TESLAVER=${TESLAVER}" >> $GITHUB_ENV
+        echo "TEXPLORERVER=${TEXPLORERVER}" >> $GITHUB_ENV
+        echo "AMSHASH=${AMSHASH}" >> $GITHUB_ENV
+
+    - name: Bundle up Atmosphere, nx-hbmenu, nx-hbloader, TegraExplorer, sys-patch, ovl-loader, tesla-menu and hekate
+      env: 
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        mkdir temp && \
+        mkdir temp/bootloader && \
+        mkdir temp/bootloader/payloads && \
+        mkdir bundle && \
+        gh release download --pattern nx-ovlloader.zip --repo ppkantorski/nx-ovlloader $OVLVER -O bundle/ovl.zip && \
+        gh release download --pattern ovlmenu.zip  --repo WerWolv/Tesla-Menu $TESLAVER -O bundle/tesla.zip && \
+        gh release download --pattern *.zip --repo Atmosphere-NX/Atmosphere $AMSVER -O bundle/ams.zip && \
+        gh release download --pattern *.zip --repo ${{ vars.SYSPATCH_REPOSITORY }} $SYSPATCHVER -O bundle/sys-patch.zip && \
+        unzip -qqo bundle/ams.zip -d temp && \
+        unzip -qqo bundle/ovl.zip -d temp && \
+        unzip -qqo bundle/tesla.zip -d temp && \
+        cd bundle && \
+        sleep 1 && \
+        gh release download --pattern hekate*.zip --repo CTCaer/hekate $HEKATEVER -O hekate.zip && \
+        unzip -qqo hekate.zip -d ../temp && \
+        rm hekate.zip && \
+        mv ../temp/hekate_ctcaer_*.bin ../temp/hekate.bin && \
+        mkdir ../temp/atmosphere/hosts && \
+        mkdir ../temp/config && \
+        gh release download --pattern *.bin --repo suchmememanyskill/TegraExplorer $TEXPLORERVER -O ../temp/bootloader/payloads/TegraExplorer.bin && \
+        sleep 1 && \
+        cp ../suppository/docker/configs/emummc.txt ../temp/atmosphere/hosts/emummc.txt && \
+        cp ../suppository/docker/configs/sysmmc.txt ../temp/atmosphere/hosts/sysmmc.txt && \
+        cp ../suppository/docker/configs/sysmmc.txt ../temp/atmosphere/hosts/default.txt && \
+        cp ../suppository/docker/configs/exosphere.ini ../temp/exosphere.ini && \
+        cd ../ && \
+        unzip -qqo bundle/sys-patch.zip -d temp/ && \
+        rm -rf bundle && \
+        cp temp/atmosphere/reboot_payload.bin temp/bootloader/payloads/fusee.bin && \
+        cd temp && \
+        zip -qr ../atmosphere-${{ env.AMSVER }}-master-${{ env.AMSHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip *
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        include-hidden-files: true
+        overwrite: true
+        name: atmosphere-${{ env.AMSVER }}-master-${{ env.AMSHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}
+        path: temp/
+
+    - name: Publish bundle to target repository
+      env: 
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        echo "" >> changelog.md && \
+        echo "- This release supports up to FW version ${{ env.HOSVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- This release does include HBL and HBMENU, which are normally bundled with atmosphere"  >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- Atmosphere-${{ env.AMSHASH }} is provided and is the version currently obtained at: https://github.com/borntohonk/Atmosphere/releases/tag/${{ env.AMSVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- dns.mitm's default.txt/emummc.txt/sysmmc.txt host files has been altered to provide a block for all nintendo servers." >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- fusee.bin is located in /bootloader/payloads/fusee.bin for convenience" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- hekate.bin is provided and is the version obtained currently at https://github.com/CTCaer/hekate/releases/${{ env.HEKATEVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- bootloader/payloads/tegraexplorer.bin is provided and is the version currently obtained at https://github.com/suchmememanyskill/TegraExplorer/releases/${{ env.TEXPLORERVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- Contains sys-patch is provided and is the version currently obtained at https://github.com/${{ vars.SYSPATCH_REPOSITORY }}/releases/${{ env.SYSPATCHVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- Contains nx-ovlloader is provided and is the version currently obtained at https://github.com/ppkantorski/nx-ovlloader/releases/${{ env.OVLVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- Contains tesla-menu is the version currently obtained at https://github.com/WerWolv/Tesla-Menu/releases/${{ env.TESLAVER }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- This release was built with suppository, a git workflow and atmosphere release suite: https://github.com/$GITHUB_REPOSITORY" >> changelog.md && \
+        echo "" >> changelog.md && \
+        echo "- This release was built with this workflow https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID and had the following repository variables set:" >> changelog.md && \
+        echo "- TARGET_REPOSITORY=${{ vars.TARGET_REPOSITORY }}" >> changelog.md && \
+        echo "- SYSPATCH_REPOSITORY=${{ vars.SYSPATCH_REPOSITORY }}" >> changelog.md && \
+        echo "" >> changelog.md && \
+        gh release create ${{ env.HOSVER }}-${{ env.AMSVER }}-${{ env.AMSHASH }} -F changelog.md atmosphere-${{ env.AMSVER }}-master-${{ env.AMSHASH }}+hbl-${{ env.HBLVER }}+hbmenu-${{ env.HBMENUVER }}.zip --title "Atmosphère+ ${{ env.AMSVER }}-${{ env.AMSHASH }} for FW version ${{ env.HOSVER }}" --repo github.com/${{ vars.TARGET_REPOSITORY }}
